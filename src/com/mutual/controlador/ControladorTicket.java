@@ -798,8 +798,8 @@ public class ControladorTicket {
 	    Persona solicitante = (Persona) session.get(Persona.class,
 		    Integer.parseInt(ACFieldDniSolicitante.getText()));
 
-	    Usuario usuario = (Usuario) session.get(Usuario.class, principal
-		    .getUsuarioActivo().getId());
+	    Usuario usuario = (Usuario) session.get(Usuario.class,
+		    principal.usuarioActivo.getId());
 
 	    nuevoTicket.setUsuario(usuario);
 	    nuevoTicket.setSolicitante(solicitante);

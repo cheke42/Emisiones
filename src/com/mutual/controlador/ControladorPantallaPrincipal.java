@@ -9,6 +9,8 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.ToolBar;
+import javafx.scene.control.Tooltip;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 
@@ -248,6 +250,23 @@ public class ControladorPantallaPrincipal {
     @FXML
     private void initialize() {
 
+	imageAeropuertoArgentino.setImage(new Image(
+		"file:recursos/imagenes/aa2000.gif"));
+	buttonAeropuertoArgentino.setTooltip(new Tooltip(
+		"Aeropuertos Argentina 2000"));
+	imageAgregarPersona.setImage(new Image(
+		"file:recursos/imagenes/nuevaPersona.png"));
+	buttonAgregarPersona
+		.setTooltip(new Tooltip("Agregar una nueva Persona"));
+	imageAgregarFactura.setImage(new Image(
+		"file:recursos/imagenes/factura.png"));
+	buttonAgregarFactura
+		.setTooltip(new Tooltip("Agregar una nueva factura"));
+
+	imageAgregarTicket.setImage(new Image(
+		"file:recursos/imagenes/addTicket.png"));
+	buttonAgregarTicket.setTooltip(new Tooltip("Agregar nuevo Ticket"));
+
 	tabla.setRowFactory(tv -> {
 	    TableRow<TicketProperty> row = new TableRow<>();
 	    row.setOnMouseClicked(event -> {
@@ -299,7 +318,7 @@ public class ControladorPantallaPrincipal {
     }
 
     @FXML
-    void aeropuertosArgentina(ActionEvent event) {
+    void aeropuertosArgentina(ActionEvent event) throws Exception {
 	try {
 	    principal.cargarVentanaAeropuertoArgentina();
 	} catch (IOException e) {
@@ -320,7 +339,7 @@ public class ControladorPantallaPrincipal {
 
     @FXML
     void cerrarSesion() throws Exception {
-	principal.setUsuarioActivo(null);
+	principal.usuarioActivo = null;
 	principal.cargarVentanaLogin();
     }
 
@@ -330,8 +349,8 @@ public class ControladorPantallaPrincipal {
     }
 
     @FXML
-    void buscarSocio(){
+    void buscarSocio() {
 	principal.buscarPersona();
     }
-    
+
 }

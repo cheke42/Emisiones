@@ -12,7 +12,6 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.TableView;
-import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
@@ -41,6 +40,14 @@ import com.mutual.util.Utilidades;
 
 public class Principal extends Application {
 
+    /*
+     * Atributos Principales
+     */
+
+    public Stage escenarioPrincipal;
+    public AnchorPane anchorPane;
+    public Usuario usuarioActivo;
+
     public static void main(String[] args) {
 	Sistema.getSistema();
 	HibernateUtil.getSessionFactory();
@@ -49,24 +56,12 @@ public class Principal extends Application {
 	launch(args);
     }
 
-    private Stage primaryStage;
-    private AnchorPane layoutPrincipal;
-    private Usuario usuarioActivo;
-
-    public Usuario getUsuarioActivo() {
-	return usuarioActivo;
-    }
-
-    public void setUsuarioActivo(Usuario usuarioActivo) {
-	this.usuarioActivo = usuarioActivo;
-    }
-
     @Override
     public void start(Stage primaryStage) throws Exception {
 	CodigoAeropuerto.cargarCodigoAeropuerto();
 	Sistema.getSistema().ActualizarlistaTicketProperty();
 
-	this.primaryStage = primaryStage;
+	this.escenarioPrincipal = primaryStage;
 	primaryStage.setResizable(false);
 	primaryStage.sizeToScene();
 	cargarVentanaLogin();
@@ -81,88 +76,44 @@ public class Principal extends Application {
 
     public void cargarVentanaLogin() throws Exception {
 	FXMLLoader loader = new FXMLLoader();
-	loader.setLocation(Utilidades.restToURL("/com/mutual/vista/login.fxml"));
-	layoutPrincipal = loader.load();
-	Pane panel = (Pane) layoutPrincipal;
-	Scene escena = new Scene(panel);
-	primaryStage.setScene(escena);
-	primaryStage.setResizable(false);
-	primaryStage.sizeToScene();
+	Stage login = cargarVentana(escenarioPrincipal, loader,
+		"/com/mutual/vista/login.fxml", anchorPane,
+		"Turismo  -  Mutual de Petroleros Jerarquicos",
+		"file:recursos/imagenes/logoMutual.png");
 	ControladorLogin ctrlLogin = loader.getController();
 	ctrlLogin.setPrincipal(this);
-	ctrlLogin.getImageLogin().setImage(
-		new Image("file:recursos/imagenes/login.png"));
-	ctrlLogin.getWebView().getEngine().load("http://localhost/carrusel/");
-	ctrlLogin
-		.getWebView()
-		.getEngine()
-		.setUserStyleSheetLocation(
-			"file:recursos/estilos/fullscreen.css");
-	primaryStage.setTitle("Turismo  -  Mutual de Petroleros Jerarquicos");
-	primaryStage.getIcons().add(
-		new Image("file:recursos/imagenes/logoMutual.png"));
-	primaryStage.show();
+	ctrlLogin.setEscenario(escenarioPrincipal);
+	login.show();
     }
 
     public void cargarVentanaPantallaPrincipal() throws Exception {
-	primaryStage.setTitle(primaryStage.getTitle() + " (Usuario: "
-		+ usuarioActivo.getUsuario() + ")");
 	FXMLLoader loader = new FXMLLoader();
-	loader.setLocation(Utilidades
-		.restToURL("/com/mutual/vista/pantallaPrincipal.fxml"));
-	layoutPrincipal = loader.load();
-	Pane panel = (Pane) layoutPrincipal;
-	Scene escena = new Scene(panel);
-	primaryStage.setScene(escena);
-	primaryStage.setResizable(false);
-	primaryStage.sizeToScene();
+	Stage pantallaPrincipal = cargarVentana(escenarioPrincipal, loader,
+		"/com/mutual/vista/pantallaPrincipal.fxml", anchorPane,
+		" (Usuario: " + usuarioActivo.getUsuario() + ")",
+		"file:recursos/imagenes/logoMutual.png");
 	ControladorPantallaPrincipal ctrlPantallaPrincipal = loader
 		.getController();
 	ctrlPantallaPrincipal.setPrincipal(this);
-	ctrlPantallaPrincipal.setEscenario(primaryStage);
-
-	ctrlPantallaPrincipal.getImageAeropuertoArgentino().setImage(
-		new Image("file:recursos/imagenes/aa2000.gif"));
-	ctrlPantallaPrincipal.getButtonAeropuertoArgentino().setTooltip(
-		new Tooltip("Aeropuertos Argentina 2000"));
-	ctrlPantallaPrincipal.getImageAgregarPersona().setImage(
-		new Image("file:recursos/imagenes/nuevaPersona.png"));
-	ctrlPantallaPrincipal.getButtonAgregarPersona().setTooltip(
-		new Tooltip("Agregar una nueva Persona"));
-	ctrlPantallaPrincipal.getImageAgregarFactura().setImage(
-		new Image("file:recursos/imagenes/factura.png"));
-	ctrlPantallaPrincipal.getButtonAgregarFactura().setTooltip(
-		new Tooltip("Agregar una nueva factura"));
-
-	ctrlPantallaPrincipal.getImageAgregarTicket().setImage(
-		new Image("file:recursos/imagenes/addTicket.png"));
-	ctrlPantallaPrincipal.getButtonAgregarTicket().setTooltip(
-		new Tooltip("Agregar nuevo Ticket"));
-	primaryStage.show();
+	ctrlPantallaPrincipal.setEscenario(escenarioPrincipal);
+	pantallaPrincipal.show();
     }
 
-    public void cargarVentanaAeropuertoArgentina() throws IOException {
+    voadsasd
+    
+    public void cargarVentanaAeropuertoArgentina() throws Exception {
 	FXMLLoader loader = new FXMLLoader();
-	loader.setLocation(Utilidades
-		.restToURL("/com/mutual/vista/aeropuertoArgentina.fxml"));
+	
 	AnchorPane anchorTransferir = (AnchorPane) loader.load();
 	Stage escenarioAA = new Stage();
+	escenarioAA = cargarVentana(escenarioAA, loader,
+		"/com/mutual/vista/aeropuertoArgentina.fxml", anchorTransferir);
 	escenarioAA.setResizable(false);
 	escenarioAA.sizeToScene();
 	Scene escena = new Scene(anchorTransferir);
 	escenarioAA.setScene(escena);
 	ControladorAeropuertoArgentina controladorAA = loader.getController();
-	controladorAA.getWebView().getEngine()
-		.load("http://www.aa2000.com.ar/");
-
-	controladorAA.getWebView().getEngine()
-		.setUserStyleSheetLocation("file:recursos/estilos/estilos.css");
-	controladorAA.getImageHome().setImage(
-		new Image("file:recursos/imagenes/home.png"));
-
-	escenarioAA.setTitle("Aeropuerto Argentina 2000");
-	escenarioAA.getIcons().add(
-		new Image("file:recursos/imagenes/aa2000.gif"));
+	controladorAA.setEscenario(escenarioAA);
 	escenarioAA.show();
 
     }
@@ -415,4 +366,32 @@ public class Principal extends Application {
 	}
 
     }
+
+    private Stage cargarVentana(Stage escenario, FXMLLoader loader,
+	    String urlFXML, AnchorPane layoutPrincipal, String title,
+	    String urlImage) throws Exception {
+	loader.setLocation(Utilidades.restToURL(urlFXML));
+	layoutPrincipal = loader.load();
+	Pane panel = (Pane) layoutPrincipal;
+	Scene escena = new Scene(panel);
+	escenario.setScene(escena);
+	escenario.setResizable(false);
+	escenario.sizeToScene();
+	escenario.setTitle(title);
+	escenario.getIcons().add(new Image(urlImage));
+	return escenario;
+    }
+
+    private Stage cargarVentana(Stage escenario, FXMLLoader loader,
+	    String urlFXML, AnchorPane layoutPrincipal) throws Exception {
+	loader.setLocation(Utilidades.restToURL(urlFXML));
+	layoutPrincipal = loader.load();
+	Pane panel = (Pane) layoutPrincipal;
+	Scene escena = new Scene(panel);
+	escenario.setScene(escena);
+	escenario.setResizable(false);
+	escenario.sizeToScene();
+	return escenario;
+    }
+
 }
