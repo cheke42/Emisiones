@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mutual.controlador.ControladorPantallaPrincipal">
+   <children>
+      <TableView fx:id="tabla" layoutX="15.0" layoutY="85.0" prefHeight="495.0" prefWidth="970.0">
+        <columns>
+          <TableColumn fx:id="tableColumnDni" prefWidth="84.0" text="DNI" />
+          <TableColumn fx:id="tableColumnPasajero" prefWidth="140.0" text="Pasajero" />
+            <TableColumn fx:id="TableColumnTicket" prefWidth="150.0" text="Ticket" />
+            <TableColumn fx:id="tableColumnItinerario" prefWidth="112.0" text="Itinerario" />
+            <TableColumn fx:id="tableColumnFechaEmision" prefWidth="100.0" text="Fecha Emisión" />
+            <TableColumn fx:id="tableColumnFechaViaje" prefWidth="100.0" text="Fecha Viaje" />
+            <TableColumn fx:id="tableColumnSolicitante" prefWidth="207.0" text="Solicitante" />
+            <TableColumn fx:id="tableColumnEstado" prefWidth="75.0" text="Estado" />
+        </columns>
+      </TableView>
+      <ToolBar fx:id="toolBar" layoutY="25.0" prefHeight="40.0" prefWidth="1000.0">
+        <items>
+          <Button fx:id="buttonAeropuertoArgentino" mnemonicParsing="false" onAction="#aeropuertosArgentina">
+               <graphic>
+                  <ImageView fx:id="imageAeropuertoArgentino" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" />
+               </graphic>
+            </Button>
+            <Button fx:id="buttonAgregarTicket" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#agregarTicket">
+               <graphic>
+                  <ImageView fx:id="imageAgregarTicket" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" />
+               </graphic>
+            </Button>
+            <Button fx:id="buttonAgregarPersona" layoutX="60.0" layoutY="10.0" mnemonicParsing="false" onAction="#agregarPersona">
+               <graphic>
+                  <ImageView fx:id="imageAgregarPersona" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" />
+               </graphic>
+            </Button>
+            <Button fx:id="buttonAgregarFactura" layoutX="110.0" layoutY="10.0" mnemonicParsing="false">
+               <graphic>
+                  <ImageView fx:id="imageAgregarFactura" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" />
+               </graphic>
+            </Button>
+        </items>
+      </ToolBar>
+      <MenuBar prefHeight="25.0" prefWidth="1000.0">
+        <menus>
+          <Menu mnemonicParsing="false" text="Archivo">
+            <items>
+                  <MenuItem mnemonicParsing="false" onAction="#cerrarSesion" text="Cerrar sesión" />
+              <MenuItem mnemonicParsing="false" onAction="#salir" text="Salir" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Aeropuerto 2000">
+            <items>
+              <MenuItem mnemonicParsing="false" onAction="#aeropuertosArgentina" text="Abrir AA2000" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Ticket">
+            <items>
+              <MenuItem mnemonicParsing="false" onAction="#agregarTicket" text="Nuevo ticket" />
+                  <MenuItem mnemonicParsing="false" text="Buscar ticket" />
+            </items>
+          </Menu>
+            <Menu mnemonicParsing="false" text="Persona">
+              <items>
+                <MenuItem mnemonicParsing="false" onAction="#agregarPersona" text="Nueva persona" />
+                  <MenuItem mnemonicParsing="false" onAction="#buscarSocio" text="Buscar Persona" />
+              </items>
+            </Menu>
+            <Menu mnemonicParsing="false" text="Factura">
+              <items>
+                <MenuItem mnemonicParsing="false" text="Buscar Factura" />
+              </items>
+            </Menu>
+            <Menu mnemonicParsing="false" text="Ayuda">
+              <items>
+                <MenuItem mnemonicParsing="false" text="Acerca de" />
+              </items>
+            </Menu>
+        </menus>
+      </MenuBar>
+   </children>
+</AnchorPane>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.scene.web.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="451.0" prefWidth="732.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mutual.controlador.ControladorLogin">
+   <children>
+      <TextField fx:id="fieldUsuario" layoutX="130.0" layoutY="36.0" text="turismo" />
+      <PasswordField fx:id="fieldPassword" layoutX="130.0" layoutY="82.0" text="1234" />
+      <Button fx:id="buttonIngresar" layoutX="110.0" layoutY="134.0" mnemonicParsing="false" onAction="#ingresar" prefHeight="25.0" prefWidth="80.0" text="Ingresar" />
+      <Button fx:id="buttonLimpear" layoutX="199.0" layoutY="134.0" mnemonicParsing="false" onAction="#limpear" prefHeight="25.0" prefWidth="80.0" text="Limpiar" />
+      <ImageView fx:id="imageLogin" fitHeight="239.0" fitWidth="281.0" layoutX="14.0" layoutY="164.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../../../recursos/imagenes/login.png" />
+         </image>
+      </ImageView>
+      <Label layoutX="40.0" layoutY="40.0" text="Usuario" />
+      <Label layoutX="40.0" layoutY="86.0" text="Contraseña" />
+      <WebView fx:id="webView" layoutX="303.0" prefHeight="451.0" prefWidth="430.0" />
+      <Label fx:id="labelError" layoutX="178.0" layoutY="107.0" prefHeight="17.0" prefWidth="101.0" text="Datos Incorrectos" textAlignment="RIGHT" textFill="#f20202" visible="false">
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font>
+      </Label>
+   </children>
+</AnchorPane>

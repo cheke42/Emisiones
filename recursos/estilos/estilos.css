@@ -1,0 +1,36 @@
+body {
+	overflow-x: hidden;
+	overflow-y: hidden;
+}
+
+.tabla2 a {
+	pointer-events: none;
+	cursor: default;
+}
+
+.arrowlistmenu, .left, .div_gris, .caja_166_gris, .borde,
+	.caja_166_celes, .cont_banner, .div_celes, .comen, .top, center,
+	#divmenu, #div11, p {
+	display: none;
+}
+
+.item {
+	color: red;
+	text-decoration: none;
+}
+
+item a {
+	color: red;
+}
+
+a.nounderline:link {
+	text-decoration: none;
+}
+
+tbody {
+	color: red;
+}
+
+header {
+	color: red;
+}
