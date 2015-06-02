@@ -1,5 +1,5 @@
 package com.mutual.modelo;
-
+// Prueba
 import java.util.List;
 
 import javax.persistence.Entity;
