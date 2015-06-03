@@ -12,6 +12,7 @@ import javafx.scene.control.ToolBar;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
 import com.mutual.enumerado.TipoVentana;
@@ -20,6 +21,10 @@ import com.mutual.principal.Principal;
 import com.mutual.property.TicketProperty;
 
 public class ControladorPantallaPrincipal {
+
+    @FXML
+    private AnchorPane anchorPane;
+
     @FXML
     private TableView<TicketProperty> tabla;
 
@@ -154,6 +159,14 @@ public class ControladorPantallaPrincipal {
 
     public TableColumn<TicketProperty, String> getTableColumnSolicitante() {
 	return tableColumnSolicitante;
+    }
+
+    public AnchorPane getAnchorPane() {
+	return anchorPane;
+    }
+
+    public void setAnchorPane(AnchorPane anchorPane) {
+	this.anchorPane = anchorPane;
     }
 
     public void setTabla(TableView<TicketProperty> tabla) {

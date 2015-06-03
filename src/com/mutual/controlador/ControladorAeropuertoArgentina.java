@@ -59,11 +59,7 @@ public class ControladorAeropuertoArgentina {
 	webView.getEngine().setUserStyleSheetLocation(
 		"file:recursos/estilos/estilos.css");
 	imageHome.setImage(new Image("file:recursos/imagenes/home.png"));
-
-	escenario.setTitle("Aeropuerto Argentina 2000");
-	escenario.getIcons()
-		.add(new Image("file:recursos/imagenes/aa2000.gif"));
-
+	
     }
 
     @FXML

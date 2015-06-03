@@ -8,6 +8,7 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 
@@ -15,6 +16,9 @@ import com.mutual.modelo.Sistema;
 import com.mutual.principal.Principal;
 
 public class ControladorLogin {
+
+    @FXML
+    private AnchorPane anchorPane;
 
     @FXML
     private WebView webView;
@@ -49,6 +53,14 @@ public class ControladorLogin {
 
     public void setLabelError(Label labelError) {
 	this.labelError = labelError;
+    }
+
+    public AnchorPane getAnchorPane() {
+	return anchorPane;
+    }
+
+    public void setAnchorPane(AnchorPane anchorPane) {
+	this.anchorPane = anchorPane;
     }
 
     public void setEscenario(Stage escenario) {
@@ -116,6 +128,7 @@ public class ControladorLogin {
 
     @FXML
     private void initialize() {
+
 	imageLogin.setImage(new Image("file:recursos/imagenes/login.png"));
 	webView.getEngine().load("http://localhost/carrusel/");
 	webView.getEngine().setUserStyleSheetLocation(

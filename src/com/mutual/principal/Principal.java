@@ -10,11 +10,13 @@ import java.util.Optional;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.TableView;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
@@ -28,10 +30,8 @@ import com.mutual.controlador.ControladorPantallaPrincipal;
 import com.mutual.controlador.ControladorSocio;
 import com.mutual.controlador.ControladorTicket;
 import com.mutual.enumerado.TipoVentana;
-import com.mutual.modelo.Itinerario;
 import com.mutual.modelo.Persona;
 import com.mutual.modelo.Sistema;
-import com.mutual.modelo.Ticket;
 import com.mutual.modelo.Usuario;
 import com.mutual.property.TicketProperty;
 import com.mutual.util.CodigoAeropuerto;
@@ -77,137 +77,65 @@ public class Principal extends Application {
     public void cargarVentanaLogin() throws Exception {
 	FXMLLoader loader = new FXMLLoader();
 	Stage login = cargarVentana(escenarioPrincipal, loader,
-		"/com/mutual/vista/login.fxml", anchorPane,
+		"/com/mutual/vista/login.fxml",
 		"Turismo  -  Mutual de Petroleros Jerarquicos",
 		"file:recursos/imagenes/logoMutual.png");
 	ControladorLogin ctrlLogin = loader.getController();
 	ctrlLogin.setPrincipal(this);
 	ctrlLogin.setEscenario(escenarioPrincipal);
+	login = centrarVentana(login, ctrlLogin.getAnchorPane());
 	login.show();
     }
 
     public void cargarVentanaPantallaPrincipal() throws Exception {
 	FXMLLoader loader = new FXMLLoader();
 	Stage pantallaPrincipal = cargarVentana(escenarioPrincipal, loader,
-		"/com/mutual/vista/pantallaPrincipal.fxml", anchorPane,
-		" (Usuario: " + usuarioActivo.getUsuario() + ")",
+		"/com/mutual/vista/pantallaPrincipal.fxml", " (Usuario: "
+			+ usuarioActivo.getUsuario() + ")",
 		"file:recursos/imagenes/logoMutual.png");
-	ControladorPantallaPrincipal ctrlPantallaPrincipal = loader
+	ControladorPantallaPrincipal controladorPPrincipal = loader
 		.getController();
-	ctrlPantallaPrincipal.setPrincipal(this);
-	ctrlPantallaPrincipal.setEscenario(escenarioPrincipal);
+	pantallaPrincipal = centrarVentana(pantallaPrincipal,
+		controladorPPrincipal.getAnchorPane());
+	controladorPPrincipal.setPrincipal(this);
+	controladorPPrincipal.setEscenario(escenarioPrincipal);
 	pantallaPrincipal.show();
+
     }
 
-    voadsasd
-    
     public void cargarVentanaAeropuertoArgentina() throws Exception {
 	FXMLLoader loader = new FXMLLoader();
-	
-	AnchorPane anchorTransferir = (AnchorPane) loader.load();
-	Stage escenarioAA = new Stage();
-	escenarioAA = cargarVentana(escenarioAA, loader,
-		"/com/mutual/vista/aeropuertoArgentina.fxml", anchorTransferir);
-	escenarioAA.setResizable(false);
-	escenarioAA.sizeToScene();
-	Scene escena = new Scene(anchorTransferir);
-	escenarioAA.setScene(escena);
-	ControladorAeropuertoArgentina controladorAA = loader.getController();
-	controladorAA.setEscenario(escenarioAA);
-	escenarioAA.show();
+	Stage escenarioAArgentina;
+	escenarioAArgentina = cargarVentana(new Stage(), loader,
+		"/com/mutual/vista/aeropuertoArgentina.fxml",
+		"Aeropuerto Argentina 2000",
+		"file:recursos/imagenes/aa2000.gif");
+	ControladorAeropuertoArgentina controladorAArgentina = loader
+		.getController();
+	controladorAArgentina.setEscenario(escenarioAArgentina);
+	escenarioAArgentina.show();
 
     }
 
     public void cargarVentanaTicket(TipoVentana tipoVentana,
 	    TableView<TicketProperty> tabla, long numeroTicket)
-	    throws IOException {
+	    throws Exception {
 	FXMLLoader loader = new FXMLLoader();
-	loader.setLocation(Utilidades
-		.restToURL("/com/mutual/vista/ticket.fxml"));
-	AnchorPane anchorTransferir = (AnchorPane) loader.load();
-	Stage escenarioTicket = new Stage();
-	escenarioTicket.setResizable(false);
-	escenarioTicket.sizeToScene();
-	Scene escena = new Scene(anchorTransferir);
-	escenarioTicket.setScene(escena);
+	Stage escenarioTicket = cargarVentana(new Stage(), loader,
+		"/com/mutual/vista/ticket.fxml");
+
 	ControladorTicket controladorTicket = loader.getController();
 	controladorTicket.setTipoVentana(tipoVentana);
 	controladorTicket.setPrincipal(this);
 	controladorTicket.setTabla(tabla);
-	if (tipoVentana == TipoVentana.UPDATE) {
-	    escenarioTicket.getIcons().add(
-		    new Image("file:recursos/imagenes/update.png"));
-	    Session session = HibernateUtil.getSessionFactory()
-		    .getCurrentSession();
-	    try {
-		session.beginTransaction();
-		Ticket ticket = (Ticket) session
-			.get(Ticket.class, numeroTicket);
-		controladorTicket.getACFieldDniPasajero().setText(
-			Integer.toString(ticket.getPasajero().getDni()));
-		controladorTicket.getACFieldDniPasajero().setEditable(false);
-		controladorTicket.getACFieldDniSolicitante().setText(
-			Integer.toString(ticket.getSolicitante().getDni()));
-		controladorTicket.getACFieldDniPasajero().setEditable(false);
-		for (Itinerario it : ticket.getItinerarios()) {
-		    controladorTicket
-			    .getListViewItinerario()
-			    .getItems()
-			    .add(it.getCodigoAeropuerto() + " "
-				    + it.getNombreAeropuerto());
-		}
-		controladorTicket.getFieldApellidoPasajero().setText(
-			ticket.getPasajero().getApellido());
-		controladorTicket.getFieldApellidoSolicitante().setText(
-			ticket.getSolicitante().getApellido());
-		controladorTicket.getFieldEmisor().setText(
-			ticket.getUsuario().getUsuario());
-		controladorTicket.getFieldImpuestos().setText(
-			Float.toString(ticket.getImpuesto()));
-		controladorTicket.getFieldNombrePasajero().setText(
-			ticket.getPasajero().getNombre());
-		controladorTicket.getFieldNombreSolicitante().setText(
-			ticket.getSolicitante().getNombre());
-		controladorTicket.getFieldNumeroTicket().setText(
-			Long.toString(numeroTicket));
-		controladorTicket.getFieldTarifaBase().setText(
-			Float.toString(ticket.getTarifaBase()));
-		controladorTicket.getDatePickerEmision().setValue(
-			LocalDateTime.ofInstant(
-				Instant.ofEpochMilli((ticket.getFechaEmision())
-					.getTime()), ZoneId.systemDefault())
-				.toLocalDate());
-		controladorTicket.getDatePickerVuelo().setValue(
-			LocalDateTime.ofInstant(
-				Instant.ofEpochMilli((ticket.getFechaViaje())
-					.getTime()), ZoneId.systemDefault())
-				.toLocalDate());
-		controladorTicket.getCheckBoxIdaVuelta().setSelected(
-			ticket.isIdaVuelta());
-		controladorTicket.getFieldNumeroTicket().setEditable(false);
-		controladorTicket.getFieldApellidoPasajero().setEditable(false);
-		controladorTicket.getFieldApellidoSolicitante().setEditable(
-			false);
-		controladorTicket.getFieldNombrePasajero().setEditable(false);
-		controladorTicket.getFieldNombreSolicitante()
-			.setEditable(false);
-		controladorTicket.getFieldNumeroTicket().setEditable(false);
-
-		session.getTransaction().commit();
-	    } catch (Exception e) {
-		if (session.getTransaction() == null) {
-		    session.getTransaction().rollback();
-		}
-	    }
-	}
-	escenarioTicket.setTitle("Ticket de Pasajero");
-	escenarioTicket.getIcons().add(
-		new Image("file:recursos/imagenes/addTicket.png"));
-	controladorTicket.getFieldEmisor().setText(usuarioActivo.getUsuario());
-	controladorTicket.getFieldEmisor().setEditable(false);
+	controladorTicket.setNumeroTicket(numeroTicket);
 	controladorTicket.setEscenario(escenarioTicket);
-	controladorTicket.getImageError().setImage(
-		new Image("file:recursos/imagenes/error.png"));
+	if (tipoVentana == TipoVentana.UPDATE) {
+	    controladorTicket.traerDatos();
+	}
+	controladorTicket.inicializar();
+	escenarioTicket = centrarVentana(escenarioTicket,
+		controladorTicket.getAnchorPane());
 	escenarioTicket.show();
 
     }
@@ -362,18 +290,14 @@ public class Principal extends Application {
 	    session.getTransaction().rollback();
 	    System.out.println("Excepcion saltada");
 
-	    // TODO: handle exception
 	}
 
     }
 
     private Stage cargarVentana(Stage escenario, FXMLLoader loader,
-	    String urlFXML, AnchorPane layoutPrincipal, String title,
-	    String urlImage) throws Exception {
+	    String urlFXML, String title, String urlImage) throws Exception {
 	loader.setLocation(Utilidades.restToURL(urlFXML));
-	layoutPrincipal = loader.load();
-	Pane panel = (Pane) layoutPrincipal;
-	Scene escena = new Scene(panel);
+	Scene escena = new Scene((Pane) loader.load());
 	escenario.setScene(escena);
 	escenario.setResizable(false);
 	escenario.sizeToScene();
@@ -383,14 +307,21 @@ public class Principal extends Application {
     }
 
     private Stage cargarVentana(Stage escenario, FXMLLoader loader,
-	    String urlFXML, AnchorPane layoutPrincipal) throws Exception {
+	    String urlFXML) throws Exception {
 	loader.setLocation(Utilidades.restToURL(urlFXML));
-	layoutPrincipal = loader.load();
-	Pane panel = (Pane) layoutPrincipal;
-	Scene escena = new Scene(panel);
+	Scene escena = new Scene((Pane) loader.load());
 	escenario.setScene(escena);
 	escenario.setResizable(false);
 	escenario.sizeToScene();
+	return escenario;
+    }
+
+    private Stage centrarVentana(Stage escenario, Pane pane) {
+	Rectangle2D primScreenBounds = Screen.getPrimary().getVisualBounds();
+	escenario
+		.setX((primScreenBounds.getWidth() - (pane.getPrefWidth())) / 2);
+	escenario
+		.setY((primScreenBounds.getHeight() - (pane.getPrefHeight())) / 4);
 	return escenario;
     }
 

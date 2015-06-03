@@ -1,5 +1,8 @@
 package com.mutual.controlador;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -17,7 +20,9 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputControl;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
@@ -42,6 +47,9 @@ import com.mutual.util.HibernateUtil;
 import com.mutual.util.Utilidades;
 
 public class ControladorTicket {
+
+    @FXML
+    private AnchorPane anchorPane;
 
     @FXML
     private TableView<TicketProperty> tabla;
@@ -112,6 +120,8 @@ public class ControladorTicket {
 
     private Stage escenario;
 
+    private long numeroTicket;
+
     private AutoCompleteTextField ACFieldDniPasajero;
 
     private AutoCompleteTextField ACFieldItinerarioOrigen;
@@ -119,6 +129,22 @@ public class ControladorTicket {
     private AutoCompleteTextField ACFieldItinerarioDestino;
 
     private AutoCompleteTextField ACFieldDniSolicitante;
+
+    public long getNumeroTicket() {
+	return numeroTicket;
+    }
+
+    public void setNumeroTicket(long numeroTicket) {
+	this.numeroTicket = numeroTicket;
+    }
+
+    public AnchorPane getAnchorPane() {
+	return anchorPane;
+    }
+
+    public void setAnchorPane(AnchorPane anchorPane) {
+	this.anchorPane = anchorPane;
+    }
 
     public Label getLabelError() {
 	return labelError;
@@ -347,8 +373,62 @@ public class ControladorTicket {
 	this.fieldNombrePasajero = fieldNombrePasajero;
     }
 
+    public void traerDatos() {
+
+	Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+	try {
+	    session.beginTransaction();
+	    Ticket ticket = (Ticket) session.get(Ticket.class, numeroTicket);
+	    ACFieldDniPasajero.setText(Integer.toString(ticket.getPasajero()
+		    .getDni()));
+	    ACFieldDniPasajero.setEditable(false);
+	    ACFieldDniSolicitante.setText(Integer.toString(ticket
+		    .getSolicitante().getDni()));
+	    ACFieldDniPasajero.setEditable(false);
+	    for (Itinerario it : ticket.getItinerarios()) {
+		listViewItinerario.getItems().add(
+			it.getCodigoAeropuerto() + " "
+				+ it.getNombreAeropuerto());
+	    }
+	    fieldApellidoPasajero.setText(ticket.getPasajero().getApellido());
+	    fieldApellidoSolicitante.setText(ticket.getSolicitante()
+		    .getApellido());
+	    fieldEmisor.setText(ticket.getUsuario().getUsuario());
+	    fieldImpuestos.setText(Float.toString(ticket.getImpuesto()));
+	    fieldNombrePasajero.setText(ticket.getPasajero().getNombre());
+	    fieldNombreSolicitante.setText(ticket.getSolicitante().getNombre());
+	    fieldNumeroTicket.setText(Long.toString(numeroTicket));
+	    fieldTarifaBase.setText(Float.toString(ticket.getTarifaBase()));
+	    datePickerEmision.setValue(LocalDateTime.ofInstant(
+		    Instant.ofEpochMilli((ticket.getFechaEmision()).getTime()),
+		    ZoneId.systemDefault()).toLocalDate());
+	    datePickerVuelo.setValue(LocalDateTime.ofInstant(
+		    Instant.ofEpochMilli((ticket.getFechaViaje()).getTime()),
+		    ZoneId.systemDefault()).toLocalDate());
+	    checkBoxIdaVuelta.setSelected(ticket.isIdaVuelta());
+	    fieldNumeroTicket.setEditable(false);
+	    fieldApellidoPasajero.setEditable(false);
+	    fieldApellidoSolicitante.setEditable(false);
+	    fieldNombrePasajero.setEditable(false);
+	    fieldNombreSolicitante.setEditable(false);
+	    fieldNumeroTicket.setEditable(false);
+
+	    session.getTransaction().commit();
+	} catch (Exception e) {
+	    if (session.getTransaction() == null) {
+		session.getTransaction().rollback();
+	    }
+	}
+    }
+
     @FXML
     private void initialize() {
+	System.out.println("Entró al initialize");
+	if (tipoVentana == TipoVentana.UPDATE) {
+	    System.out.println("Entró al update");
+	    traerDatos();
+	}
+
 	final ContextMenu contextMenu = new ContextMenu();
 	MenuItem cut = new MenuItem("Borrar");
 	contextMenu.getItems().add(cut);
@@ -830,5 +910,16 @@ public class ControladorTicket {
 	}
 
 	HibernateUtil.traerPersonasBase();
+    }
+
+    public void inicializar() {
+	escenario.setTitle("Ticket de Pasajero");
+	escenario.getIcons().add(
+		new Image("file:recursos/imagenes/addTicket.png"));
+	fieldEmisor.setText(principal.usuarioActivo.getUsuario());
+	fieldEmisor.setEditable(false);
+
+	imageError.setImage(new Image("file:recursos/imagenes/error.png"));
+	escenario.show();
     }
 }
