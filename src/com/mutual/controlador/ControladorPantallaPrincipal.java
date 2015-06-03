@@ -1,6 +1,7 @@
 package com.mutual.controlador;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -362,8 +363,9 @@ public class ControladorPantallaPrincipal {
     }
 
     @FXML
-    void buscarSocio() {
-	principal.buscarPersona();
+    void buscarSocio() throws Exception {
+	principal.cargarVentanaSocio(TipoVentana.BUSCAR,
+		new ArrayList<Integer>());
     }
 
 }

@@ -1,20 +1,28 @@
 package com.mutual.controlador;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 
+import org.controlsfx.dialog.DialogStyle;
+import org.controlsfx.dialog.Dialogs;
 import org.hibernate.Session;
 
 import com.mutual.enumerado.TipoVentana;
 import com.mutual.modelo.Persona;
+import com.mutual.modelo.Sistema;
+import com.mutual.principal.Principal;
 import com.mutual.util.HibernateUtil;
 import com.mutual.util.Utilidades;
 
@@ -106,6 +114,16 @@ public class ControladorSocio {
     private ArrayList<Integer> personasNuevas;
 
     private TipoVentana tipoVentana;
+
+    private Principal principal;
+
+    public Principal getPrincipal() {
+	return principal;
+    }
+
+    public void setPrincipal(Principal principal) {
+	this.principal = principal;
+    }
 
     public TipoVentana getTipoVentana() {
 	return tipoVentana;
@@ -427,6 +445,80 @@ public class ControladorSocio {
     @FXML
     void salir() {
 	escenario.close();
+    }
+
+    public void traerDatosUpdate() {
+	escenario.setTitle("Actualizar datos");
+	escenario.getIcons().add(
+		new Image("file:recursos/imagenes/updatePersona.png"));
+	fieldDni1.setEditable(false);
+	fieldDni2.setEditable(false);
+
+	switch (personasNuevas.size()) {
+	case 1:
+	    Session session = HibernateUtil.getSessionFactory()
+		    .getCurrentSession();
+	    session.beginTransaction();
+
+	    Persona per = (Persona) session.get(Persona.class,
+		    personasNuevas.get(0));
+	    fieldDni1.setText(Integer.toString(per.getDni()));
+	    fieldApellido1.setText(per.getApellido());
+	    fieldNombre1.setText(per.getNombre());
+	    tabPane.getTabs().remove(1);
+	    tab1.setText("");
+	    session.getTransaction().commit();
+	    escenario.setTitle("Socios");
+	    escenario.getIcons().add(
+		    new Image("file:recursos/imagenes/addTicket.png"));
+	    escenario.show();
+	    break;
+	case 2:
+	    Persona p1 = Sistema.getSistema().buscarPersona(
+		    personasNuevas.get(0));
+	    Persona p2 = Sistema.getSistema().buscarPersona(
+		    personasNuevas.get(1));
+
+	    fieldApellido1.setText(p1.getApellido());
+	    fieldNombre1.setText(p1.getNombre());
+	    fieldDni1.setText(Integer.toString(p1.getDni()));
+
+	    fieldApellido2.setText(p2.getApellido());
+	    fieldNombre2.setText(p2.getNombre());
+	    fieldDni2.setText(Integer.toString(p2.getDni()));
+	    datePickerNacimiento1.requestFocus();
+
+	    escenario.setTitle("Socios");
+	    escenario.getIcons().add(
+		    new Image("file:recursos/imagenes/addTicket.png"));
+	    escenario.show();
+	    break;
+
+	}
+
+    }
+
+    public void nuevaVentana() {
+	tabPane.getTabs().remove(1);
+	escenario.setTitle("Nueva Persona");
+	escenario.getIcons().add(
+		new Image("file:recursos/imagenes/nuevaPersona.png"));
+	tabPane.getTabs().get(0).setText("");
+    }
+
+    public String ventanaBuscar() {
+	Stage stage = new Stage();
+	stage.setX(0);
+	Rectangle2D primScreenBounds = Screen.getPrimary().getVisualBounds();
+	escenario.setX((primScreenBounds.getWidth() - (stage.getWidth())) / 2);
+	escenario
+		.setY((primScreenBounds.getHeight() - (stage.getHeight())) / 4);
+
+	Optional<String> response = Dialogs.create().owner(stage)
+		.title("Buscar Socio").style(DialogStyle.NATIVE)
+		.masthead("Ingrese el dni del socio ").message("DNI:")
+		.showTextInput("numero de documento");
+	return response.get();
     }
 
 }
