@@ -368,4 +368,9 @@ public class ControladorPantallaPrincipal {
 		new ArrayList<Integer>());
     }
 
+    @FXML
+    void buscarTicket() throws Exception {
+	principal.cargarVentanaTicket(TipoVentana.BUSCAR, tabla, 0);
+    }
+
 }

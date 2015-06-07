@@ -1,5 +1,8 @@
 package com.mutual.controlador;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Optional;
 
@@ -21,7 +24,6 @@ import org.hibernate.Session;
 
 import com.mutual.enumerado.TipoVentana;
 import com.mutual.modelo.Persona;
-import com.mutual.modelo.Sistema;
 import com.mutual.principal.Principal;
 import com.mutual.util.HibernateUtil;
 import com.mutual.util.Utilidades;
@@ -376,33 +378,35 @@ public class ControladorSocio {
 
 		Persona p1 = (Persona) session.get(Persona.class,
 			Integer.parseInt(fieldDni1.getText()));
-		p1.setApellido(fieldApellido1.getText());
-		p1.setDomicilio(fieldDomicilio1.getText());
-		p1.setEmpresa(fieldEmpresa1.getText());
-		p1.setFechaAlta(Utilidades.datePickerToDate(datePickerAlta1));
-		p1.setFechaNacimiento(Utilidades
-			.datePickerToDate(datePickerNacimiento1));
-		p1.setMail(fieldCorreo1.getText());
-		p1.setNombre(fieldNombre1.getText());
-		p1.setOcupacion(fieldOcupación1.getText());
-		p1.setTelefono(fieldTelefono1.getText());
+
+		cargarDatosEnPersona(p1, fieldApellido1, fieldNombre1,
+			fieldDni1, fieldCorreo1, fieldDomicilio1,
+			fieldEmpresa1, fieldOcupación1, fieldTelefono1,
+			datePickerAlta1, datePickerNacimiento1);
+
 		session.update(p1);
 		tabPane.getTabs().remove(0);
 	    } else if (tipoVentana == TipoVentana.NUEVA) {
 		Persona persona = new Persona();
-		persona.setApellido(fieldApellido1.getText());
-		persona.setDni(Integer.parseInt(fieldDni1.getText()));
-		persona.setDomicilio(fieldDomicilio1.getText());
-		persona.setEmpresa(fieldEmpresa1.getText());
-		persona.setFechaAlta(Utilidades
-			.datePickerToDate(datePickerAlta1));
-		persona.setFechaNacimiento(Utilidades
-			.datePickerToDate(datePickerNacimiento1));
-		persona.setMail(fieldCorreo1.getText());
-		persona.setNombre(fieldNombre1.getText());
-		persona.setOcupacion(fieldOcupación1.getText());
-		persona.setTelefono(fieldTelefono1.getText());
+		cargarDatosEnPersona(persona, fieldApellido1, fieldNombre1,
+			fieldDni1, fieldCorreo1, fieldDomicilio1,
+			fieldEmpresa1, fieldOcupación1, fieldTelefono1,
+			datePickerAlta1, datePickerNacimiento1);
+
 		session.save(persona);
+		salir();
+
+	    } else if (tipoVentana == TipoVentana.BUSCAR) {
+
+		Persona personaBuscar = (Persona) session.get(Persona.class,
+			Integer.parseInt(fieldDni1.getText()));
+
+		cargarDatosEnPersona(personaBuscar, fieldApellido1,
+			fieldNombre1, fieldDni1, fieldCorreo1, fieldDomicilio1,
+			fieldEmpresa1, fieldOcupación1, fieldTelefono1,
+			datePickerAlta1, datePickerNacimiento1);
+
+		session.update(personaBuscar);
 		salir();
 
 	    }
@@ -422,17 +426,12 @@ public class ControladorSocio {
 	try {
 	    session.beginTransaction();
 	    Persona p2 = (Persona) session.get(Persona.class,
-		    Integer.parseInt(fieldDni2.getText()));
-	    p2.setApellido(fieldApellido2.getText());
-	    p2.setDomicilio(fieldDomicilio2.getText());
-	    p2.setEmpresa(fieldEmpresa2.getText());
-	    p2.setFechaAlta(Utilidades.datePickerToDate(datePickerAlta2));
-	    p2.setFechaNacimiento(Utilidades
-		    .datePickerToDate(datePickerNacimiento2));
-	    p2.setMail(fieldCorreo2.getText());
-	    p2.setNombre(fieldNombre2.getText());
-	    p2.setOcupacion(fieldOcupación2.getText());
-	    p2.setTelefono(fieldTelefono2.getText());
+
+	    Integer.parseInt(fieldDni2.getText()));
+	    cargarDatosEnPersona(p2, fieldApellido2, fieldNombre2, fieldDni2,
+		    fieldCorreo2, fieldDomicilio2, fieldEmpresa2,
+		    fieldOcupación2, fieldTelefono2, datePickerAlta2,
+		    datePickerNacimiento2);
 
 	    session.getTransaction().commit();
 	    salir();
@@ -453,48 +452,101 @@ public class ControladorSocio {
 		new Image("file:recursos/imagenes/updatePersona.png"));
 	fieldDni1.setEditable(false);
 	fieldDni2.setEditable(false);
-
-	switch (personasNuevas.size()) {
-	case 1:
-	    Session session = HibernateUtil.getSessionFactory()
-		    .getCurrentSession();
-	    session.beginTransaction();
-
-	    Persona per = (Persona) session.get(Persona.class,
-		    personasNuevas.get(0));
-	    fieldDni1.setText(Integer.toString(per.getDni()));
-	    fieldApellido1.setText(per.getApellido());
-	    fieldNombre1.setText(per.getNombre());
-	    tabPane.getTabs().remove(1);
-	    tab1.setText("");
-	    session.getTransaction().commit();
-	    escenario.setTitle("Socios");
-	    escenario.getIcons().add(
-		    new Image("file:recursos/imagenes/addTicket.png"));
-	    escenario.show();
-	    break;
-	case 2:
-	    Persona p1 = Sistema.getSistema().buscarPersona(
-		    personasNuevas.get(0));
-	    Persona p2 = Sistema.getSistema().buscarPersona(
-		    personasNuevas.get(1));
-
-	    fieldApellido1.setText(p1.getApellido());
-	    fieldNombre1.setText(p1.getNombre());
-	    fieldDni1.setText(Integer.toString(p1.getDni()));
-
-	    fieldApellido2.setText(p2.getApellido());
-	    fieldNombre2.setText(p2.getNombre());
-	    fieldDni2.setText(Integer.toString(p2.getDni()));
-	    datePickerNacimiento1.requestFocus();
-
-	    escenario.setTitle("Socios");
-	    escenario.getIcons().add(
-		    new Image("file:recursos/imagenes/addTicket.png"));
-	    escenario.show();
-	    break;
-
+	Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+	System.out.println("Personas nuevas: " + personasNuevas.size());
+	for (Integer dni : personasNuevas) {
+	    System.out.println(dni);
 	}
+
+	if (personasNuevas.size() == 1) {
+	    try {
+		System.out.println("UNA PERSONA NueVA");
+		session.beginTransaction();
+
+		Persona per = (Persona) session.get(Persona.class,
+			personasNuevas.get(0));
+		cargarDatosEnComponentes(per, fieldApellido1, fieldNombre1,
+			fieldDni1, fieldCorreo1, fieldDomicilio1,
+			fieldEmpresa1, fieldOcupación1, fieldTelefono1,
+			datePickerAlta1, datePickerNacimiento1);
+		tabPane.getTabs().remove(1);
+		tab1.setText("");
+		session.getTransaction().commit();
+		escenario.setTitle("Socios");
+		escenario.getIcons().add(
+			new Image("file:recursos/imagenes/addTicket.png"));
+
+	    } catch (Exception e) {
+		session.getTransaction().rollback();
+		System.out.println("Se la mandó");
+	    }
+
+	} else if (personasNuevas.size() == 2) {
+	    System.out.println("Personas nuevas: " + personasNuevas.size());
+	    for (Integer dni : personasNuevas) {
+		System.out.println(dni);
+	    }
+	    try {
+		System.out.println("DOS PERSONAS NUEVAS");
+		session.beginTransaction();
+		Persona p1 = (Persona) session.get(Persona.class,
+			personasNuevas.get(0));
+		Persona p2 = (Persona) session.get(Persona.class,
+			personasNuevas.get(1));
+
+		cargarDatosEnComponentes(p1, fieldApellido1, fieldNombre1,
+			fieldDni1, fieldCorreo1, fieldDomicilio1,
+			fieldEmpresa1, fieldOcupación1, fieldTelefono1,
+			datePickerAlta1, datePickerNacimiento1);
+		cargarDatosEnComponentes(p2, fieldApellido2, fieldNombre2,
+			fieldDni2, fieldCorreo2, fieldDomicilio2,
+			fieldEmpresa2, fieldOcupación2, fieldTelefono2,
+			datePickerAlta2, datePickerNacimiento2);
+
+		session.getTransaction().commit();
+
+	    } catch (Exception e) {
+		session.getTransaction().rollback();
+	    }
+	}
+
+    }
+
+    private void cargarDatosEnComponentes(Persona persona, TextField apellido,
+	    TextField nombre, TextField dni, TextField correo,
+	    TextField domicilio, TextField empresa, TextField ocupacion,
+	    TextField telefono, DatePicker alta, DatePicker nacimiento) {
+	apellido.setText(persona.getApellido());
+	nombre.setText(persona.getNombre());
+	dni.setText(Integer.toString(persona.getDni()));
+	correo.setText(persona.getMail());
+	domicilio.setText(persona.getDomicilio());
+	empresa.setText(persona.getEmpresa());
+	ocupacion.setText(persona.getOcupacion());
+	telefono.setText(persona.getTelefono());
+	alta.setValue(LocalDateTime.ofInstant(
+		Instant.ofEpochMilli((persona.getFechaAlta()).getTime()),
+		ZoneId.systemDefault()).toLocalDate());
+	nacimiento.setValue(LocalDateTime.ofInstant(
+		Instant.ofEpochMilli((persona.getFechaNacimiento()).getTime()),
+		ZoneId.systemDefault()).toLocalDate());
+
+    }
+
+    private void cargarDatosEnPersona(Persona persona, TextField apellido,
+	    TextField nombre, TextField dni, TextField correo,
+	    TextField domicilio, TextField empresa, TextField ocupacion,
+	    TextField telefono, DatePicker alta, DatePicker nacimiento) {
+	persona.setApellido(apellido.getText());
+	persona.setDni(Integer.parseInt(dni.getText()));
+	persona.setDomicilio(domicilio.getText());
+	persona.setEmpresa(empresa.getText());
+	persona.setFechaAlta(Utilidades.datePickerToDate(alta));
+	persona.setFechaNacimiento(Utilidades.datePickerToDate(nacimiento));
+	persona.setMail(correo.getText());
+	persona.setNombre(nombre.getText());
+	persona.setOcupacion(ocupacion.getText());
+	persona.setTelefono(telefono.getText());
 
     }
 

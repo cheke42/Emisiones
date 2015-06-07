@@ -4,7 +4,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Optional;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -12,16 +12,16 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.ContextMenu;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
-import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputControl;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
@@ -129,6 +129,187 @@ public class ControladorTicket {
     private AutoCompleteTextField ACFieldItinerarioDestino;
 
     private AutoCompleteTextField ACFieldDniSolicitante;
+
+    @FXML
+    private void initialize() {
+	if (tipoVentana == TipoVentana.UPDATE) {
+	    traerDatos();
+	}
+
+	listViewItinerario.addEventFilter(
+		KeyEvent.KEY_PRESSED,
+		event -> {
+		    if (event.getCode() == KeyCode.DELETE) {
+			if (!listViewItinerario.getItems().isEmpty()) {
+			    System.out.println("item seleccionado "
+				    + listViewItinerario.getSelectionModel()
+					    .getSelectedIndex());
+			    listViewItinerario.getItems().remove(
+				    listViewItinerario.getSelectionModel()
+					    .getSelectedIndex());
+			}
+
+		    }
+
+		});
+
+	ACFieldItinerarioOrigen = new AutoCompleteTextField() {
+	    @Override
+	    public void replaceText(int start, int end, String text) {
+
+		if (!text.matches("[0-9]") & !text.matches("\\s")) {
+		    super.replaceText(start, end, text.toUpperCase());
+		}
+	    }
+	};
+
+	ACFieldItinerarioDestino = new AutoCompleteTextField() {
+	    @Override
+	    public void replaceText(int start, int end, String text) {
+		if (!text.matches("[0-9]") & !text.matches("\\s")) {
+		    super.replaceText(start, end, text.toUpperCase());
+		}
+	    }
+	};
+
+	ACFieldDniPasajero = new AutoCompleteTextField() {
+	    @Override
+	    public void replaceText(int start, int end, String text) {
+		if (!text.matches("[a-zA-Z]+") && !text.matches("\\s")) {
+		    if ((ACFieldDniPasajero.getText().length() < 8)
+			    && (!Utilidades.esSimbolo(text))) {
+			super.replaceText(start, end, text.toUpperCase());
+		    } else {
+			super.replaceText(start, end, "");
+		    }
+		}
+	    }
+	};
+	ACFieldDniSolicitante = new AutoCompleteTextField() {
+	    @Override
+	    public void replaceText(int start, int end, String text) {
+		if (!text.matches("[a-zA-Z]+") && !text.matches("\\s")) {
+		    if ((ACFieldDniSolicitante.getText().length() < 8)
+			    && (!Utilidades.esSimbolo(text))) {
+			super.replaceText(start, end, text.toUpperCase());
+		    } else {
+			super.replaceText(start, end, "");
+		    }
+		}
+	    }
+	};
+
+	ACFieldItinerarioOrigen.getEntries().addAll(
+		CodigoAeropuerto.codigoAeropuerto);
+	ACFieldItinerarioDestino.getEntries().addAll(
+		CodigoAeropuerto.codigoAeropuerto);
+	ACFieldDniPasajero.getEntries().addAll(
+		Sistema.getSistema().listaDniPasajeros());
+	ACFieldDniSolicitante.getEntries().addAll(
+		Sistema.getSistema().listaDniPasajeros());
+
+	ACFieldDniPasajero.addEventHandler(ActionEvent.ACTION,
+		new EventHandler<ActionEvent>() {
+
+		    @Override
+		    public void handle(ActionEvent event) {
+			int dniPasajero = Integer.parseInt(ACFieldDniPasajero
+				.getText());
+			if (event.getEventType().equals(ActionEvent.ACTION)) {
+			    fieldApellidoPasajero.clear();
+			    fieldNombrePasajero.clear();
+			    if (!Sistema.getSistema()
+				    .existePersona(dniPasajero)) {
+				fieldApellidoPasajero.requestFocus();
+				fieldApellidoPasajero.setEditable(true);
+				fieldNombrePasajero.setEditable(true);
+			    } else {
+				fieldApellidoPasajero.setText(Sistema
+					.getSistema()
+					.buscarPersona(dniPasajero)
+					.getApellido());
+				fieldNombrePasajero
+					.setText(Sistema.getSistema()
+						.buscarPersona(dniPasajero)
+						.getNombre());
+				fieldApellidoPasajero.setEditable(false);
+				fieldNombrePasajero.setEditable(false);
+				ACFieldItinerarioOrigen.requestFocus();
+			    }
+			}
+		    }
+		});
+	ACFieldDniSolicitante.addEventHandler(ActionEvent.ACTION,
+		new EventHandler<ActionEvent>() {
+
+		    @Override
+		    public void handle(ActionEvent event) {
+			int dniSolicitante = Integer
+				.parseInt(ACFieldDniSolicitante.getText());
+			if (event.getEventType().equals(ActionEvent.ACTION)) {
+			    fieldNombreSolicitante.clear();
+			    fieldApellidoSolicitante.clear();
+			    if (!Sistema.getSistema().existePersona(
+				    dniSolicitante)) {
+				fieldNombreSolicitante.requestFocus();
+				fieldApellidoSolicitante.setEditable(true);
+				fieldNombreSolicitante.setEditable(true);
+			    } else {
+				fieldNombreSolicitante.setText(Sistema
+					.getSistema()
+					.buscarPersona(dniSolicitante)
+					.getNombre());
+				fieldApellidoSolicitante.setText(Sistema
+					.getSistema()
+					.buscarPersona(dniSolicitante)
+					.getApellido());
+				fieldApellidoSolicitante.setEditable(false);
+				fieldNombreSolicitante.setEditable(false);
+				fieldNumeroTicket.requestFocus();
+			    }
+			}
+		    }
+		});
+
+	ACFieldItinerarioOrigen.addEventHandler(ActionEvent.ACTION,
+		new EventHandler<ActionEvent>() {
+
+		    @Override
+		    public void handle(ActionEvent event) {
+			if (event.getEventType().equals(ActionEvent.ACTION)) {
+
+			    ACFieldItinerarioOrigen
+				    .setText(ACFieldItinerarioOrigen.getText());
+			    listViewItinerario.getItems().add(
+				    ACFieldItinerarioOrigen.getText());
+			    ACFieldItinerarioOrigen.setText("");
+			    ACFieldItinerarioOrigen.requestFocus();
+			}
+		    }
+		});
+
+	ACFieldItinerarioDestino.addEventHandler(ActionEvent.ACTION,
+		new EventHandler<ActionEvent>() {
+
+		    @Override
+		    public void handle(ActionEvent event) {
+			ACFieldItinerarioDestino
+				.setText(ACFieldItinerarioDestino.getText()
+					.substring(0, 3));
+			checkBoxIdaVuelta.requestFocus();
+		    }
+		});
+
+	ACFieldItinerarioDestino.setPromptText("Destino");
+	ACFieldItinerarioOrigen.setPromptText("Origen");
+	ACFieldDniPasajero.setPromptText("DNI del pasajero");
+	ACFieldDniSolicitante.setPromptText("DNI del solicitante");
+	gridDniPasajero.add(ACFieldDniPasajero, 0, 0);
+	gridDniSolicitante.add(ACFieldDniSolicitante, 0, 0);
+	gridItinerarioDestino.add(ACFieldItinerarioDestino, 0, 0);
+	gridItinerarioOrigen.add(ACFieldItinerarioOrigen, 0, 0);
+
+    }
 
     public long getNumeroTicket() {
 	return numeroTicket;
@@ -374,7 +555,6 @@ public class ControladorTicket {
     }
 
     public void traerDatos() {
-
 	Session session = HibernateUtil.getSessionFactory().getCurrentSession();
 	try {
 	    session.beginTransaction();
@@ -422,188 +602,6 @@ public class ControladorTicket {
     }
 
     @FXML
-    private void initialize() {
-	System.out.println("Entró al initialize");
-	if (tipoVentana == TipoVentana.UPDATE) {
-	    System.out.println("Entró al update");
-	    traerDatos();
-	}
-
-	final ContextMenu contextMenu = new ContextMenu();
-	MenuItem cut = new MenuItem("Borrar");
-	contextMenu.getItems().add(cut);
-	cut.setOnAction(new EventHandler<ActionEvent>() {
-	    @Override
-	    public void handle(ActionEvent event) {
-		MenuItem item = (MenuItem) event.getSource();
-		System.out.println(item.toString());
-		System.out.println(item.getText());
-		System.out.println(event.toString());
-		System.out.println("Dió a borrar");
-	    }
-	});
-
-	listViewItinerario.setContextMenu(contextMenu);
-
-	ACFieldItinerarioOrigen = new AutoCompleteTextField() {
-	    @Override
-	    public void replaceText(int start, int end, String text) {
-
-		if (!text.matches("[0-9]") & !text.matches("\\s")) {
-		    super.replaceText(start, end, text.toUpperCase());
-		}
-	    }
-	};
-
-	ACFieldItinerarioDestino = new AutoCompleteTextField() {
-	    @Override
-	    public void replaceText(int start, int end, String text) {
-		if (!text.matches("[0-9]") & !text.matches("\\s")) {
-		    super.replaceText(start, end, text.toUpperCase());
-		}
-	    }
-	};
-
-	ACFieldDniPasajero = new AutoCompleteTextField() {
-	    @Override
-	    public void replaceText(int start, int end, String text) {
-		if (!text.matches("[a-zA-Z]+") && !text.matches("\\s")) {
-		    if ((ACFieldDniPasajero.getText().length() < 8)
-			    && (!Utilidades.esSimbolo(text))) {
-			super.replaceText(start, end, text.toUpperCase());
-		    } else {
-			super.replaceText(start, end, "");
-		    }
-		}
-	    }
-	};
-	ACFieldDniSolicitante = new AutoCompleteTextField() {
-	    @Override
-	    public void replaceText(int start, int end, String text) {
-		if (!text.matches("[a-zA-Z]+") && !text.matches("\\s")) {
-		    if ((ACFieldDniSolicitante.getText().length() < 8)
-			    && (!Utilidades.esSimbolo(text))) {
-			super.replaceText(start, end, text.toUpperCase());
-		    } else {
-			super.replaceText(start, end, "");
-		    }
-		}
-	    }
-	};
-
-	ACFieldItinerarioOrigen.getEntries().addAll(
-		CodigoAeropuerto.codigoAeropuerto);
-	ACFieldItinerarioDestino.getEntries().addAll(
-		CodigoAeropuerto.codigoAeropuerto);
-	ACFieldDniPasajero.getEntries().addAll(
-		Sistema.getSistema().listaDniPasajeros());
-	ACFieldDniSolicitante.getEntries().addAll(
-		Sistema.getSistema().listaDniPasajeros());
-
-	ACFieldDniPasajero.addEventHandler(ActionEvent.ACTION,
-		new EventHandler<ActionEvent>() {
-
-		    @Override
-		    public void handle(ActionEvent event) {
-			int dniPasajero = Integer.parseInt(ACFieldDniPasajero
-				.getText());
-			if (event.getEventType().equals(ActionEvent.ACTION)) {
-			    fieldApellidoPasajero.clear();
-			    fieldNombrePasajero.clear();
-			    if (!Sistema.getSistema()
-				    .existePersona(dniPasajero)) {
-				fieldApellidoPasajero.requestFocus();
-				fieldApellidoPasajero.setEditable(true);
-				fieldNombrePasajero.setEditable(true);
-			    } else {
-				fieldApellidoPasajero.setText(Sistema
-					.getSistema()
-					.buscarPersona(dniPasajero)
-					.getApellido());
-				fieldNombrePasajero
-					.setText(Sistema.getSistema()
-						.buscarPersona(dniPasajero)
-						.getNombre());
-				fieldApellidoPasajero.setEditable(false);
-				fieldNombrePasajero.setEditable(false);
-				ACFieldItinerarioOrigen.requestFocus();
-			    }
-			}
-		    }
-		});
-	ACFieldDniSolicitante.addEventHandler(ActionEvent.ACTION,
-		new EventHandler<ActionEvent>() {
-
-		    @Override
-		    public void handle(ActionEvent event) {
-			int dniSolicitante = Integer
-				.parseInt(ACFieldDniSolicitante.getText());
-			if (event.getEventType().equals(ActionEvent.ACTION)) {
-			    fieldNombreSolicitante.clear();
-			    fieldApellidoSolicitante.clear();
-			    if (!Sistema.getSistema().existePersona(
-				    dniSolicitante)) {
-				fieldNombreSolicitante.requestFocus();
-				fieldApellidoSolicitante.setEditable(true);
-				fieldNombreSolicitante.setEditable(true);
-			    } else {
-				fieldNombreSolicitante.setText(Sistema
-					.getSistema()
-					.buscarPersona(dniSolicitante)
-					.getNombre());
-				fieldApellidoSolicitante.setText(Sistema
-					.getSistema()
-					.buscarPersona(dniSolicitante)
-					.getApellido());
-				fieldApellidoSolicitante.setEditable(false);
-				fieldNombreSolicitante.setEditable(false);
-				fieldNumeroTicket.requestFocus();
-			    }
-			}
-		    }
-		});
-
-	ACFieldItinerarioOrigen.addEventHandler(ActionEvent.ACTION,
-		new EventHandler<ActionEvent>() {
-
-		    @Override
-		    public void handle(ActionEvent event) {
-			if (event.getEventType().equals(ActionEvent.ACTION)) {
-
-			    ACFieldItinerarioOrigen
-				    .setText(ACFieldItinerarioOrigen.getText());
-			    listViewItinerario.getItems().add(
-				    ACFieldItinerarioOrigen.getText());
-			    ACFieldItinerarioOrigen.setText("");
-			    ACFieldItinerarioOrigen.requestFocus();
-			}
-		    }
-		});
-
-	ACFieldItinerarioDestino.addEventHandler(ActionEvent.ACTION,
-		new EventHandler<ActionEvent>() {
-
-		    @Override
-		    public void handle(ActionEvent event) {
-			ACFieldItinerarioDestino
-				.setText(ACFieldItinerarioDestino.getText()
-					.substring(0, 3));
-			checkBoxIdaVuelta.requestFocus();
-		    }
-		});
-
-	ACFieldItinerarioDestino.setPromptText("Destino");
-	ACFieldItinerarioOrigen.setPromptText("Origen");
-	ACFieldDniPasajero.setPromptText("DNI del pasajero");
-	ACFieldDniSolicitante.setPromptText("DNI del solicitante");
-	gridDniPasajero.add(ACFieldDniPasajero, 0, 0);
-	gridDniSolicitante.add(ACFieldDniSolicitante, 0, 0);
-	gridItinerarioDestino.add(ACFieldItinerarioDestino, 0, 0);
-	gridItinerarioOrigen.add(ACFieldItinerarioOrigen, 0, 0);
-
-    }
-
-    @FXML
     void fieldNombrePasajeroSeleccionado(ActionEvent event) {
 	System.out.println("ASA");
     }
@@ -644,36 +642,32 @@ public class ControladorTicket {
 	    }
 
 	} else if (tipoVentana == TipoVentana.UPDATE) {
-	    System.out.println("Update");
 	    Session session = HibernateUtil.getSessionFactory()
 		    .getCurrentSession();
 	    // try {
 	    session.beginTransaction();
 	    Ticket ticket = (Ticket) session.get(Ticket.class,
 		    Long.parseLong(fieldNumeroTicket.getText()));
-	    System.out.println(ticket.getPasajero().getDni());
 	    ticket.getItinerarios().clear();
 
-	    Itinerario itDestino = (Itinerario) session
-		    .get(Itinerario.class,
-			    Sistema.getSistema()
-				    .buscarItinerario(
-					    ACFieldItinerarioOrigen.getText())
-				    .getIdItinerario());
-	    Itinerario itOrigen = (Itinerario) session.get(
-		    Itinerario.class,
-		    Sistema.getSistema()
-			    .buscarItinerario(
-				    ACFieldItinerarioDestino.getText())
-			    .getIdItinerario());
-	    ticket.setItinerarios(new ArrayList<Itinerario>(Arrays.asList(
-		    itOrigen, itDestino)));
+	    ArrayList<Itinerario> itinerarios = new ArrayList<Itinerario>();
+
+	    for (String item : listViewItinerario.getItems()) {
+		itinerarios.add((Itinerario) session.get(
+			Itinerario.class,
+			Sistema.getSistema()
+				.buscarItinerario(item.substring(0, 3))
+				.getIdItinerario()));
+	    }
+
+	    ticket.setItinerarios(itinerarios);
 	    ticket.setIdaVuelta(checkBoxIdaVuelta.isSelected());
 	    ticket.setFechaEmision(Utilidades
 		    .datePickerToDate(datePickerEmision));
 	    ticket.setFechaViaje(Utilidades.datePickerToDate(datePickerVuelo));
 	    ticket.setTarifaBase(Float.parseFloat(fieldTarifaBase.getText()));
 	    ticket.setImpuesto(Float.parseFloat(fieldImpuestos.getText()));
+	    ticket.calcularValoresFactura();
 	    session.update(ticket);
 	    session.getTransaction().commit();
 	    HibernateUtil.traerTicketBase();
@@ -687,6 +681,9 @@ public class ControladorTicket {
 	    //
 	    // }
 	    // }
+	} else if (tipoVentana == TipoVentana.BUSCAR) {
+	    tipoVentana = TipoVentana.UPDATE;
+	    guardar(event);
 	}
     }
 
@@ -922,4 +919,20 @@ public class ControladorTicket {
 	imageError.setImage(new Image("file:recursos/imagenes/error.png"));
 	escenario.show();
     }
+
+    public void nuevaVentana() {
+
+    }
+
+    public Long ventanaBuscar() {
+	Stage stage = new Stage();
+	stage.setX(0);
+
+	Optional<String> response = Dialogs.create().owner(stage)
+		.title("Buscar ticket").style(DialogStyle.NATIVE)
+		.masthead("Ingrese el número del ticket ").message("Ticket:")
+		.showTextInput("número de ticket");
+	return Long.parseLong(response.get(), 10);
+    }
+
 }

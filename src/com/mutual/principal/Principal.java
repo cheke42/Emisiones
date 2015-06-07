@@ -1,7 +1,6 @@
 package com.mutual.principal;
 
 import java.util.ArrayList;
-import java.util.Optional;
 
 import javafx.application.Application;
 import javafx.event.EventHandler;
@@ -15,9 +14,6 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-
-import org.controlsfx.dialog.DialogStyle;
-import org.controlsfx.dialog.Dialogs;
 
 import com.mutual.controlador.ControladorAeropuertoArgentina;
 import com.mutual.controlador.ControladorLogin;
@@ -127,6 +123,16 @@ public class Principal extends Application {
 	if (tipoVentana == TipoVentana.UPDATE) {
 	    controladorTicket.traerDatos();
 	}
+	if (tipoVentana == TipoVentana.BUSCAR) {
+	    System.out.println("Ingresó al buscar");
+	    Long nroTicket = controladorTicket.ventanaBuscar();
+	    if (Sistema.getSistema().existeTicket(nroTicket)) {
+		System.out.println("El ticket Existe");
+		controladorTicket.setNumeroTicket(nroTicket);
+		controladorTicket.traerDatos();
+	    }
+
+	}
 	controladorTicket.inicializar();
 	escenarioTicket = centrarVentana(escenarioTicket,
 		controladorTicket.getAnchorPane());
@@ -154,88 +160,13 @@ public class Principal extends Application {
 		controladorSocio.getPersonasNuevas().add(
 			Integer.parseInt(dniBuscar));
 		controladorSocio.traerDatosUpdate();
-	    } else {
-
+		controladorSocio.setTipoVentana(TipoVentana.UPDATE);
 	    }
-
-	    // Sistema.getSistema().buscarPersona(dni);
-
 	}
 
 	escenarioSocio.show();
 
     }
-
-    // public void buscarPersona() {
-    // Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-    // try {
-    // Stage stage = new Stage();
-    // stage.setX(0);
-    // Optional<String> response = Dialogs.create().owner(stage)
-    // .title("Buscar Socio").style(DialogStyle.NATIVE)
-    // .masthead("Ingrese el dni del socio ").message("DNI:")
-    // .showTextInput("numero de documento");
-    //
-    // if (Sistema.getSistema().existePersona(
-    // Integer.parseInt(response.get()))) {
-    // session.beginTransaction();
-    //
-    // Persona p = (Persona) session.get(Persona.class,
-    // Integer.parseInt(response.get()));
-    // FXMLLoader loader = new FXMLLoader();
-    // loader.setLocation(Utilidades
-    // .restToURL("/com/mutual/vista/socio.fxml"));
-    // AnchorPane anchorTransferir = (AnchorPane) loader.load();
-    // Stage escenarioSocio = new Stage();
-    // escenarioSocio.setResizable(false);
-    // escenarioSocio.sizeToScene();
-    // Scene escena = new Scene(anchorTransferir);
-    // escenarioSocio.setScene(escena);
-    //
-    // ControladorSocio controladorSocio = loader.getController();
-    // controladorSocio.setEscenario(escenarioSocio);
-    // controladorSocio.setTipoVentana(TipoVentana.UPDATE);
-    // controladorSocio.getFieldApellido2().setText(p.getApellido());
-    // controladorSocio.getFieldCorreo2().setText(p.getMail());
-    // controladorSocio.getFieldDni2().setText(
-    // Integer.toString(p.getDni()));
-    // controladorSocio.getFieldDomicilio2().setText(p.getDomicilio());
-    // controladorSocio.getFieldEmpresa2().setText(p.getEmpresa());
-    // controladorSocio.getFieldNombre2().setText(p.getNombre());
-    // controladorSocio.getFieldOcupación2().setText(p.getOcupacion());
-    // controladorSocio.getFieldTelefono2().setText(p.getTelefono());
-    // controladorSocio.getDatePickerAlta2().setValue(
-    // LocalDateTime.ofInstant(
-    // Instant.ofEpochMilli((p.getFechaAlta())
-    // .getTime()), ZoneId.systemDefault())
-    // .toLocalDate());
-    // controladorSocio.getDatePickerNacimiento2().setValue(
-    // LocalDateTime.ofInstant(
-    // Instant.ofEpochMilli((p.getFechaNacimiento())
-    // .getTime()), ZoneId.systemDefault())
-    // .toLocalDate());
-    // controladorSocio.getTab2().setText("");
-    //
-    // controladorSocio.setDatePickerAlta2(Utilidades
-    // .dateToDatePicker(p.getFechaAlta()));
-    // controladorSocio.setDatePickerNacimiento2(Utilidades
-    // .dateToDatePicker(p.getFechaNacimiento()));
-    // controladorSocio.getTabPane().getTabs().remove(0);
-    // session.getTransaction().commit();
-    // escenarioSocio.setTitle("Socio");
-    // escenarioSocio.show();
-    //
-    // }
-    //
-    // response.ifPresent(name -> System.out.println("Your name: " + name));
-    //
-    // } catch (Exception e) {
-    // session.getTransaction().rollback();
-    // System.out.println("Excepcion saltada");
-    //
-    // }
-    //
-    // }
 
     private Stage cargarVentana(Stage escenario, FXMLLoader loader,
 	    String urlFXML, String title, String urlImage) throws Exception {

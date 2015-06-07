@@ -194,8 +194,6 @@ public class Sistema {
 			itinerario = itinerario + itH.getCodigoAeropuerto()
 				+ " ";
 		    }
-		    
-		    
 
 		    for (int i = ticketHiber.getItinerarios().size() - 2; i >= 0; i--) {
 			itinerario = itinerario
@@ -230,4 +228,16 @@ public class Sistema {
 	}
 
     }
+
+    public boolean existeTicket(Long numeroTicket) {
+	boolean existe = false;
+	for (Ticket ticket : tickets) {
+	    if (ticket.getNumero() == numeroTicket) {
+		existe = true;
+		break;
+	    }
+	}
+	return existe;
+    }
+
 }

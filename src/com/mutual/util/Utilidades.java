@@ -29,7 +29,7 @@ public class Utilidades {
 	fechaDate.setHours(23);
 	fechaDate.setMinutes(59);
 	fechaDate.setSeconds(59);
-	return fechaDate;
+	return sumarRestarDiasFecha(fechaDate, 0);
     }
 
     @SuppressWarnings("deprecation")
@@ -44,18 +44,12 @@ public class Utilidades {
 	return datePicker;
     }
 
-    @SuppressWarnings("deprecation")
     public static Date sumarRestarDiasFecha(Date fecha, int dias) {
 
 	Calendar calendar = Calendar.getInstance();
-
 	calendar.setTime(fecha); // Configuramos la fecha que se recibe
-
 	calendar.add(Calendar.DAY_OF_YEAR, dias); // numero de días a añadir, o
 						  // restar en caso de días<0
-	calendar.getTime().setHours(23);
-	calendar.getTime().setMinutes(59);
-
 	return calendar.getTime(); // Devuelve el objeto Date con los nuevos
 				   // días añadidos
 
@@ -110,7 +104,6 @@ public class Utilidades {
 	    Desktop.getDesktop().browse(htmlFile.toURI());
 	    // Desktop.getDesktop().open(htmlFile);
 	} catch (IOException e) {
-	    // TODO Auto-generated catch block
 	    e.printStackTrace();
 	}
 

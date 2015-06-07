@@ -59,7 +59,7 @@
           <Menu mnemonicParsing="false" text="Ticket">
             <items>
               <MenuItem mnemonicParsing="false" onAction="#agregarTicket" text="Nuevo ticket" />
-                  <MenuItem mnemonicParsing="false" text="Buscar ticket" />
+                  <MenuItem mnemonicParsing="false" onAction="#buscarTicket" text="Buscar ticket" />
             </items>
           </Menu>
             <Menu mnemonicParsing="false" text="Persona">
