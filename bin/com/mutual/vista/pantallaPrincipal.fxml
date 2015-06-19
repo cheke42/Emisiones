@@ -70,7 +70,7 @@
             </Menu>
             <Menu mnemonicParsing="false" text="Factura">
               <items>
-                <MenuItem mnemonicParsing="false" text="Buscar Factura" />
+                <MenuItem mnemonicParsing="false" onAction="#buscarFactura" text="Buscar Factura" />
               </items>
             </Menu>
             <Menu mnemonicParsing="false" text="Ayuda">

@@ -16,6 +16,7 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
 import com.mutual.controlador.ControladorAeropuertoArgentina;
+import com.mutual.controlador.ControladorFechasInicioFin;
 import com.mutual.controlador.ControladorLogin;
 import com.mutual.controlador.ControladorPantallaPrincipal;
 import com.mutual.controlador.ControladorSocio;
@@ -50,7 +51,6 @@ public class Principal extends Application {
     public void start(Stage primaryStage) throws Exception {
 	CodigoAeropuerto.cargarCodigoAeropuerto();
 	Sistema.getSistema().ActualizarlistaTicketProperty();
-
 	this.escenarioPrincipal = primaryStage;
 	primaryStage.setResizable(false);
 	primaryStage.sizeToScene();
@@ -104,6 +104,18 @@ public class Principal extends Application {
 		.getController();
 	controladorAArgentina.setEscenario(escenarioAArgentina);
 	escenarioAArgentina.show();
+
+    }
+
+    public void cargarVentanaFechaInicioFin() throws Exception {
+	FXMLLoader loader = new FXMLLoader();
+	Stage escenarioFechas;
+	escenarioFechas = cargarVentana(new Stage(), loader,
+		"/com/mutual/vista/fechasInicioFin.fxml", "Buscar Tickets",
+		"file:recursos/imagenes/calendario.png");
+	ControladorFechasInicioFin controladorFecha = loader.getController();
+	controladorFecha.setEscenario(escenarioFechas);
+	escenarioFechas.show();
 
     }
 

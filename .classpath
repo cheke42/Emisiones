@@ -6,7 +6,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Hibernate"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/MYSQL"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Reportes"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/slf4j"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Commons-lang3"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

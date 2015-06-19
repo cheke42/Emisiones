@@ -373,4 +373,10 @@ public class ControladorPantallaPrincipal {
 	principal.cargarVentanaTicket(TipoVentana.BUSCAR, tabla, 0);
     }
 
+    @FXML
+    void buscarFactura() throws Exception{
+	principal.cargarVentanaFechaInicioFin();
+    }
+    
 }
+

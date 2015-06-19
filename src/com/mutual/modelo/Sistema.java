@@ -2,6 +2,7 @@ package com.mutual.modelo;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -37,7 +38,7 @@ public class Sistema {
     private static void conectToDatabase() {
 	String driver = "com.mysql.jdbc.Driver";
 	String url = "jdbc:mysql://localhost:3306/";
-	String db = "acuariobd";
+	String db = "turismo";
 
 	con = new ConnectionDB(driver, db, url);
 	con.connect();
@@ -50,9 +51,10 @@ public class Sistema {
 
     }
 
-    public void cargarReporte(String reporte) {
+    public void cargarReporte(String pathReporte, Map<String,Object> parametros) {
 	conectToDatabase();
-	AbstractJasperReports.createReport(con.getConn(), reporte);
+	System.out.println("Se conectó!");
+	AbstractJasperReports.createReport(con.getConn(), pathReporte, parametros);
     }
 
     // private static ConnectionDB getCon() {
